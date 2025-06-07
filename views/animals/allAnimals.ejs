@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal List</title>
+</head>
+
+<body>
+    <%- include('../partials/nav') %>
+    <h1>List of Animals 🦒</h1>
+    <ul>
+        <% animals.forEach(animal=> { %>
+            <li>
+                <a href="/animals/<%= animal._id%>"><%= animal.name %></a>
+            </li>
+        <% }); %>
+    </ul>
+</body>
+
+</html>

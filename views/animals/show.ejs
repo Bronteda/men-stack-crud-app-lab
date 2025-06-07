@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=animal.name%></title>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+    <h1><%=animal.name%></h1>
+    <p>Information:</p>
+    <p>The <%=animal.name%> is a <%=animal.animalClass%> and it's habitat is <%=animal.habitat%> and is a <%=animal.diet%></p>
+    <p><img src=<%=animal.img%> alt=""></p>
+
+</body>
+</html>
