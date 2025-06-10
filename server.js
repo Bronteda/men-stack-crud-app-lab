@@ -1,12 +1,13 @@
 //dotenv
 const dotenv = require("dotenv");
 dotenv.config();
-
 //mongoose
 const mongoose = require("mongoose");
-
 //express
 const express = require("express");
+
+const morgan = require("morgan");
+const methodOverride = require("method-override");
 
 //importing an img
 const fs = require("fs");
@@ -19,10 +20,11 @@ const Animal = require("./models/animals.js");
 const app = express();
 
 /*---middleware--*/
-//serves if you displaying images locally 
-app.use('/media', express.static(path.join(__dirname, 'media')));
-
+//serves if you displaying images locally
+app.use("/media", express.static(path.join(__dirname, "media")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride("_method"));
 
 /*---Routes---*/
 app.get("/", (req, res) => {
@@ -41,60 +43,34 @@ app.get("/animal/new", (req, res) => {
 });
 
 //Show pages
-app.get("/animals/:id", async (req, res) => {
-  const animalFound = await Animal.findById(req.params.id);
+app.get("/animals/:animalId", async (req, res) => {
+  const animalFound = await Animal.findById(req.params.animalId);
   res.render("animals/show.ejs", { animal: animalFound });
+});
+
+//delete animal
+app.delete("/animals/:animalId", async (req, res) => {
+  await Animal.findByIdAndDelete(req.params.animalId);
+  res.redirect("/animals");
+});
+
+//edit the animal details
+app.get("/animals/:animalId/edit", async (req, res) => {
+  const foundAnimal = await Animal.findById(req.params.animalId);
+  console.log(foundAnimal);
+  res.render("animals/edit.ejs", { animal: foundAnimal });
+});
+
+//updating
+app.put("/animals/:animalId", async (req, res) => {
+  await Animal.findByIdAndUpdate(req.params.animalId, req.body);
+  res.redirect(`/animals/${req.params.animalId}`);
 });
 
 //create the actual new animal and send it to mongodb
 app.post("/animals", async (req, res) => {
   console.log(req.body);
-  const { name, animalClass, habitat, diet, img } = req.body;
-  let savedImagePath = "";
-  //Downloading img
-
-  if (img && (img.startsWith('http://') || img.startsWith('https://'))) {
-    try {
-      const response = await axios.get(img, { responseType: "stream" });
-
-      const fileName = `${Date.now()}-${path.basename(img)}`;
-      console.log(fileName);
-      const mediaDir = path.join(__dirname, 'media')
-      const savePath = path.join(__dirname, "media", fileName);
-      console.log(savePath);
-
-      // Create the media folder if it doesn't exist
-      if (!fs.existsSync(mediaDir)) {
-        fs.mkdirSync(mediaDir);
-      }
-
-      const writer = fs.createWriteStream(savePath);
-      response.data.pipe(writer);
-
-      //waits for image to download
-      await new Promise((resolve, reject) => {
-        writer.on("finish", resolve);
-        writer.on("error", reject);
-      });
-
-      savedImagePath = `/media/${fileName}`;
-    } catch (err) {
-      console.error("Image download failed:", err.message);
-      savedImagePath = '/media/default.jpg';
-    }
-  }
-
-  //save to Mongodb
-  const animal = new Animal({
-    name,
-    animalClass,
-    habitat,
-    diet,
-    img: savedImagePath,
-  });
-
-  await animal.save();
-
+  await Animal.create(req.body);
   res.redirect("/animals");
 });
 

@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
     <title><%=animal.name%></title>
-</head>
-<body>
+  </head>
+  <body>
     <%- include('../partials/nav') %>
-    <h1><%=animal.name%></h1>
-    <p>Information:</p>
-    <p>The <%=animal.name%> is a <%=animal.animalClass%> and it's habitat is <%=animal.habitat%> and is a <%=animal.diet%></p>
-    <p><img src=<%=animal.img%> alt=""></p>
+    <div class="animal-details">
+      <h1><%=animal.name%></h1>
+      <p>Information:</p>
+      <p>
+        The <%=animal.name%> is a <%=animal.animalClass%> and it's habitat is
+        <%=animal.habitat%> and is a <%=animal.diet%>
+      </p>
+      <div class="animal-actions">
+          <form class="delete-form" action="/animals/<%=animal._id%>?_method=DELETE" method="POST">
+            <button class="delete-button" type="submit">Delete <%= animal.name %></button>
+          </form>
 
-</body>
+        <a class="edit-link" href="/animals/<%=animal._id%>/edit"><div class="edit-text">Edit <%= animal.name %></div></a>
+      </div>
+    </div>
+  </body>
 </html>

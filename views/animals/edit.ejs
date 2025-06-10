@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title>Edit Animal</title>
+  </head>
+  <body>
+    <%- include('../partials/nav') %>
+    <h1>Edit <%= animal.name%></h1>
+    <form action="/animals/<%=animal._id%>?_method=PUT" method="POST">
+      <label for="name">Name:</label>
+      <input type="text" name="name" id="name" value="<%=animal.name%>"/>
+
+      <label for="animalClass">Class Of Animal:</label>
+      <input type="text" name="animalClass" id="animalClass" value="<%=animal.animalClass%>" />
+
+      <label for="habitat">Habitat:</label>
+      <input type="text" name="habitat" id="habitat" value="<%=animal.habitat%>" />
+
+      <label for="diet">Choose a Diet:</label>
+      <select name="diet" id="diet">
+          <option value="Herbivore" <%= animal.diet === "Herbivore" ? "selected" : "" %>>Herbivore</option>
+          <option value="Carnivore" <%= animal.diet === "Carnivore" ? "selected" : "" %>>Carnivore</option>
+          <option value="Omnivore" <%= animal.diet === "Omnivore" ? "selected" : "" %>>Omnivore</option>
+      </select>
+
+      <button type="submit">Update Animal</button>
+    </form>
+  </body>
+</html>

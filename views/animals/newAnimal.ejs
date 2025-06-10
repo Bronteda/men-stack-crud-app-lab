@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
     <title>Add an Animal</title>
   </head>
 
@@ -12,7 +13,7 @@
     <p>Complete the form below and click submit</p>
     <form action="/animals" method="POST" autocomplete="off">
       <label for="name">Name:</label>
-      <input type="text" name="name" id="" name />
+      <input type="text" name="name" id="name"/>
 
       <label for="animalClass">Class Of Animal:</label>
       <input type="text" name="animalClass" id="animalClass" />
@@ -27,8 +28,8 @@
         <option value="Omnivore">Omnivore</option>
       </select>
 
-      <label for="img">Image URL:</label>
-      <input type="text" name="img" id="img" />
+      <!-- <label for="img">Image URL:</label>
+      <input type="text" name="img" id="img" /> -->
 
       <!-- <input list="dietOptions" name="diet" id="diet" />
             <datalist id="dietOptions">
