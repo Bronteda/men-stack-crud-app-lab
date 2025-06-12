@@ -11,12 +11,9 @@
     <%- include('../partials/nav') %>
     <h1>Add an Animal</h1>
     <p>Complete the form below and click submit</p>
-    <form action="/animals" method="POST" autocomplete="off">
+    <form  class="addAnimal" action="/animals" method="POST" autocomplete="off">
       <label for="name">Name:</label>
-      <input type="text" name="name" id="name"/>
-
-      <label for="animalClass">Class Of Animal:</label>
-      <input type="text" name="animalClass" id="animalClass" />
+      <input type="text" name="name" id="name" />
 
       <label for="habitat">Habitat:</label>
       <input type="text" name="habitat" id="habitat" />
@@ -27,16 +24,11 @@
         <option value="Carnivore">Carnivore</option>
         <option value="Omnivore">Omnivore</option>
       </select>
+      <label for="lifespan">Lifespan:</label>
+      <input type="text" name="lifespan" id="lifespan" />
 
-      <!-- <label for="img">Image URL:</label>
-      <input type="text" name="img" id="img" /> -->
-
-      <!-- <input list="dietOptions" name="diet" id="diet" />
-            <datalist id="dietOptions">
-                <option value="Herbivore"></option>
-                <option value="Carnivore"></option>
-                <option value="Omnivore"></option>
-            </datalist> -->
+      <label for="location">Location:</label>
+      <input type="text" name="location" id="location" />
 
       <button type="submit">Submit</button>
     </form>

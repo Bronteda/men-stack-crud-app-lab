@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <title><%=data.name%></title>
+  </head>
+  <body>
+    <%- include('../partials/nav') %>
+    <% if (data) { %>
+      <h1><%= data.name %></h1>
+
+      <% if (imageUrl) { %>
+        <img src="<%= imageUrl %>" alt="<%= data.name %>" style="max-width:300px;">
+      <% } else { %>
+        <p>No image available.</p>
+      <% } %>
+
+      <div>
+        <p><strong>Locations:</strong> <%= data.locations[0] %></p>
+        <p><strong>Habitat:</strong> <%= data.characteristics.habitat %></p>
+        <p><strong>Diet:</strong> <%= data.characteristics.diet %></p>
+        <p><strong>Lifespan:</strong> <%= data.characteristics.lifespan %></p>
+      </div>
+
+      <!-- Add to DB Form -->
+      <form action="/animals" method="POST">
+        <input type="hidden" name="name" value="<%= data.name %>">
+        <input type="hidden" name="location" value="<%= data.locations[0] %>">
+        <input type="hidden" name="animalClass" value="<%= data.characteristics.type %>">
+        <input type="hidden" name="habitat" value="<%= data.characteristics.habitat %>">
+        <input type="hidden" name="diet" value="<%= data.characteristics.diet %>">
+        <input type="hidden" name="lifespan" value="<%= data.characteristics.lifespan %>">
+        <button type="submit">Save to My Kingdom</button>
+      </form>
+
+    <% } else { %>
+      <p>No animals found with that name.</p>
+    <% } %>
+
+
+  </body>
+</html>

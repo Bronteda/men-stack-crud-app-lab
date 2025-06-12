@@ -10,11 +10,18 @@
     <%- include('../partials/nav') %>
     <div class="animal-details">
       <h1><%=animal.name%></h1>
-      <p>Information:</p>
-      <p>
-        The <%=animal.name%> is a <%=animal.animalClass%> and it's habitat is
-        <%=animal.habitat%> and is a <%=animal.diet%>
-      </p>
+        <% if (imageUrl) { %>
+        <img src="<%= imageUrl %>" alt="<%= animal.name %>" style="max-width:300px;">
+        <% } else { %>
+          <p>No image available.</p>
+        <% } %>
+      <h2>Information:</h2>
+       <div>
+        <p><strong>Locations:</strong> <%= animal.location %></p>
+        <p><strong>Habitat:</strong> <%= animal.habitat %></p>
+        <p><strong>Diet:</strong> <%= animal.diet %></p>
+        <p><strong>Lifespan:</strong> <%= animal.lifespan %></p>
+      </div>
       <div class="animal-actions">
           <form class="delete-form" action="/animals/<%=animal._id%>?_method=DELETE" method="POST">
             <button class="delete-button" type="submit">Delete <%= animal.name %></button>

@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/stylesheets/style.css" />
     <title>Animal Kingdom</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <%- include('./partials/nav') %>
-        <h1>Welcome to the Animal Kingdom 🦁</h1>
-        <img class="animal-pic1" src="/media/default.jpg" alt="default">
-</body>
+    <h1>Welcome to the Animal Kingdom 🦁</h1>
+    <div class="searchBar">
+      <h2>Search for an animal</h2>
+      <form  action="/searchItem" method="POST">
+        <label for="search">Name: </label>
+        <input type="text" id="search" name="name" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
 
+    <img class="animal-pic1" src="/media/default.jpg" alt="default" />
+  </body>
 </html>

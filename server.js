@@ -25,6 +25,7 @@ app.use("/media", express.static(path.join(__dirname, "media")));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
+app.use(express.json());
 
 /*---Routes---*/
 app.get("/", (req, res) => {
@@ -45,7 +46,15 @@ app.get("/animal/new", (req, res) => {
 //Show pages
 app.get("/animals/:animalId", async (req, res) => {
   const animalFound = await Animal.findById(req.params.animalId);
-  res.render("animals/show.ejs", { animal: animalFound });
+
+  //get image again from API
+  const imageRes = await fetch(
+    `https://api.unsplash.com/photos/random?query=${animalFound.name}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`
+  );
+
+  const imageData = await imageRes.json();
+  const imageUrl = imageData.urls?.regular || null;
+  res.render("animals/show.ejs", { animal: animalFound , imageUrl});
 });
 
 //delete animal
@@ -72,6 +81,43 @@ app.post("/animals", async (req, res) => {
   console.log(req.body);
   await Animal.create(req.body);
   res.redirect("/animals");
+});
+
+//search for the animal
+app.post("/searchItem", async (req, res) => {
+  const animalName = req.body.name;
+  const animalApi = process.env.API_KEY;
+  const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
+  const url = `https://api.api-ninjas.com/v1/animals?name=${animalName}`;
+
+  try {
+    const animalApiResponse = await fetch(url, {
+      method: "GET",
+      headers: {
+        "X-Api-Key": animalApi,
+      },
+    });
+
+    if (!animalApiResponse.ok) {
+      const errorText = await animalApiResponse.text();
+      return res.status(animalApiResponse.status).json({ error: errorText });
+    }
+    //Animal API
+    const animalData = await animalApiResponse.json();
+    console.log(animalData[0]);
+    console.log(animalData[0].characteristics.type);
+
+    //Image API
+    const imageApiResponse = await fetch(
+      `https://api.unsplash.com/photos/random?query=${animalName}&client_id=${unsplashAccessKey}`
+    );
+    const imageData = await imageApiResponse.json();
+    const imageUrl = imageData.urls ? imageData.urls.regular : null;
+
+    res.render("animals/foundAnimal.ejs", { data: animalData[0], imageUrl });
+  } catch (e) {
+    res.status(500).send("Error occurred: " + e.message);
+  }
 });
 
 /*---Listening---*/
