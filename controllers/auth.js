@@ -53,7 +53,7 @@ router.post("/sign-in", async (req, res) => {
   // There is a user! Time to test their password with bcrypt
   const validPassword = bcrypt.compareSync(
     req.body.password,
-    userInDatabase.password
+    userInDatabase.password,
   );
   if (!validPassword) {
     return res.send("Login failed. Please try again.");

@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  animal: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Animal", // Reference to the Animal model
+    },
+  ],
 });
 
 //create model
