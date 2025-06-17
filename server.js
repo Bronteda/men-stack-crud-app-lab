@@ -5,14 +5,17 @@ dotenv.config();
 const mongoose = require("mongoose");
 //express
 const express = require("express");
+//manage sessions
+const session = require("express-session");
 
 const morgan = require("morgan");
 const methodOverride = require("method-override");
-
-//importing an img
-const fs = require("fs");
 const path = require("path");
-const axios = require("axios");
+
+// Set the port from environment variable or default to 3000
+const port = process.env.PORT ? process.env.PORT : "3000";
+//auth router holds all the auth enpoints
+const authController = require("./controllers/auth.js");
 
 //import animal model
 const Animal = require("./models/animals.js");
@@ -26,10 +29,24 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use("/auth", authController);
 
 /*---Routes---*/
 app.get("/", (req, res) => {
-  res.render("homePage.ejs");
+  res.render("loginPage.ejs");
+});
+
+app.get("/homePage", (req, res) => {
+  res.render("homePage.ejs", {
+    user: req.session.user,
+  });
 });
 
 //display all Animals
@@ -54,7 +71,7 @@ app.get("/animals/:animalId", async (req, res) => {
 
   const imageData = await imageRes.json();
   const imageUrl = imageData.urls?.regular || null;
-  res.render("animals/show.ejs", { animal: animalFound , imageUrl});
+  res.render("animals/show.ejs", { animal: animalFound, imageUrl });
 });
 
 //delete animal
@@ -121,7 +138,7 @@ app.post("/searchItem", async (req, res) => {
 });
 
 /*---Listening---*/
-app.listen(process.env.PORT, async () => {
+app.listen(port, async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected to MongoDb Atlas");

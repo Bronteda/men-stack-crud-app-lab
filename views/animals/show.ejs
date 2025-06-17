@@ -11,7 +11,7 @@
     <div class="animal-details">
       <h1><%=animal.name%></h1>
         <% if (imageUrl) { %>
-        <img src="<%= imageUrl %>" alt="<%= animal.name %>" style="max-width:300px;">
+        <img src="<%= imageUrl %>" alt="<%= animal.name %>" style="max-width:250px;">
         <% } else { %>
           <p>No image available.</p>
         <% } %>
@@ -23,11 +23,11 @@
         <p><strong>Lifespan:</strong> <%= animal.lifespan %></p>
       </div>
       <div class="animal-actions">
-          <form class="delete-form" action="/animals/<%=animal._id%>?_method=DELETE" method="POST">
-            <button class="delete-button" type="submit">Delete <%= animal.name %></button>
+          <form class="action-form" action="/animals/<%=animal._id%>?_method=DELETE" method="POST">
+            <button type="submit" class="action-btn delete">Delete <%= animal.name %></button>
           </form>
 
-        <a class="edit-link" href="/animals/<%=animal._id%>/edit"><div class="edit-text">Edit <%= animal.name %></div></a>
+        <a href="/animals/<%=animal._id%>/edit" class="action-btn edit">Edit <%= animal.name %></a>
       </div>
     </div>
   </body>

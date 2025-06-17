@@ -9,16 +9,15 @@
 
   <body>
     <%- include('./partials/nav') %>
-    <h1>Welcome to the Animal Kingdom 🦁</h1>
+    <h1>Welcome to your Animal Kingdom <%= user.username %>🦁</h1>
     <div class="searchBar">
-      <h2>Search for an animal</h2>
-      <form  action="/searchItem" method="POST">
+      <img class="animal-pic1" src="/media/default.jpg" alt="default" />
+      <form class="search-form" action="/searchItem" method="POST">
+        <h2>Search for an animal</h2>
         <label for="search">Name: </label>
         <input type="text" id="search" name="name" />
         <button type="submit">Submit</button>
       </form>
     </div>
-
-    <img class="animal-pic1" src="/media/default.jpg" alt="default" />
   </body>
 </html>

@@ -9,12 +9,9 @@
   <body>
     <%- include('../partials/nav') %>
     <h1>Edit <%= animal.name%></h1>
-    <form action="/animals/<%=animal._id%>?_method=PUT" method="POST">
+    <form class="editAnimal" action="/animals/<%=animal._id%>?_method=PUT" method="POST">
       <label for="name">Name:</label>
       <input type="text" name="name" id="name" value="<%=animal.name%>"/>
-
-      <label for="animalClass">Class Of Animal:</label>
-      <input type="text" name="animalClass" id="animalClass" value="<%=animal.animalClass%>" />
 
       <label for="habitat">Habitat:</label>
       <input type="text" name="habitat" id="habitat" value="<%=animal.habitat%>" />
@@ -26,7 +23,13 @@
           <option value="Omnivore" <%= animal.diet === "Omnivore" ? "selected" : "" %>>Omnivore</option>
       </select>
 
-      <button type="submit">Update Animal</button>
+      <label for="lifespan" >Lifespan:</label>
+      <input type="text" name="lifespan" id="lifespan" value="<%=animal.lifespan%>"/>
+
+      <label for="location">Location:</label>
+      <input type="text" name="location" id="location" value="<%=animal.location%>"/>
+
+      <button class="subtmit-Btn" type="submit">Update Animal</button>
     </form>
   </body>
 </html>
