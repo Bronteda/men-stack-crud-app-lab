@@ -9,7 +9,7 @@
 
   <body>
     <%- include('./partials/nav') %>
-    <h1>Welcome to your Animal Kingdom <%= user.username %>🦁</h1>
+    <h1>Welcome to your Animal Kingdom <%=user.username%>🦁</h1>
     <div class="searchBar">
       <img class="animal-pic1" src="/media/default.jpg" alt="default" />
       <form class="search-form" action="/searchItem" method="POST">

@@ -16,11 +16,15 @@ const path = require("path");
 const port = process.env.PORT ? process.env.PORT : "3000";
 //auth router holds all the auth enpoints
 const authController = require("./controllers/auth.js");
+//queries functions
+const { addAnimalToUser } = require("./queries/queries.js");
 
 //import animal model
 const Animal = require("./models/animals.js");
 
 const app = express();
+
+let user = null;
 
 /*---middleware--*/
 //serves if you displaying images locally
@@ -44,9 +48,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/homePage", (req, res) => {
-  res.render("homePage.ejs", {
-    user: req.session.user,
-  });
+  user = req.session.user._id;
+  if (!user) {
+    // Redirect or handle unauthenticated access
+    return res.redirect("/"); // or render a message
+  }
+
+  res.render("homePage.ejs", { user });
 });
 
 //display all Animals
@@ -96,7 +104,9 @@ app.put("/animals/:animalId", async (req, res) => {
 //create the actual new animal and send it to mongodb
 app.post("/animals", async (req, res) => {
   console.log(req.body);
-  await Animal.create(req.body);
+  const newAnimal = await Animal.create(req.body);
+  await addAnimalToUser(req.session.user._id, newAnimal._id);
+  console.log(`Added animal ${newAnimal._id} to user ${req.session.user._id}`);
   res.redirect("/animals");
 });
 
@@ -142,6 +152,10 @@ app.listen(port, async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Connected to MongoDb Atlas");
+
+    // await mongoose.disconnect();
+    // console.log("Disconnected from MongoDB");
+    // process.exit();
   } catch (e) {
     console.error("A problem occured connecting", e);
   }
