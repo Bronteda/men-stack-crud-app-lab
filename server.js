@@ -17,10 +17,21 @@ const port = process.env.PORT ? process.env.PORT : "3000";
 //auth router holds all the auth enpoints
 const authController = require("./controllers/auth.js");
 //queries functions
-const { addAnimalToUser } = require("./queries/queries.js");
+const {
+  addAnimalToUser,
+  getUserAnimals,
+  removeAnimalForUser,
+  updateAnimalDetailsForUser,
+  fetchAnimalImage,
+} = require("./queries/queries.js");
+
+const { isAuthenticated } = require("./middleware/requireLogin.js");
+
 
 //import animal model
 const Animal = require("./models/animals.js");
+//importing user model
+const User = require("./models/user.js");
 
 const app = express();
 
@@ -41,6 +52,7 @@ app.use(
   })
 );
 app.use("/auth", authController);
+app.use("/animals", isAuthenticated);
 
 /*---Routes---*/
 app.get("/", (req, res) => {
@@ -48,19 +60,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/homePage", (req, res) => {
-  user = req.session.user._id;
-  if (!user) {
+  if (!req.session.user._id) {
     // Redirect or handle unauthenticated access
     return res.redirect("/"); // or render a message
   }
 
-  res.render("homePage.ejs", { user });
+  res.render("homePage.ejs", { user: req.session.user});
 });
 
 //display all Animals
 app.get("/animals", async (req, res) => {
-  const animals = await Animal.find({});
-  res.render("animals/allAnimals.ejs", { animals });
+  //filter animals by user
+  const userAnimals = await getUserAnimals(req.session.user._id);
+  res.render("animals/allAnimals.ejs", { animals: userAnimals });
 });
 
 //create a new animal page
@@ -72,19 +84,21 @@ app.get("/animal/new", (req, res) => {
 app.get("/animals/:animalId", async (req, res) => {
   const animalFound = await Animal.findById(req.params.animalId);
 
-  //get image again from API
-  const imageRes = await fetch(
-    `https://api.unsplash.com/photos/random?query=${animalFound.name}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`
-  );
-
-  const imageData = await imageRes.json();
-  const imageUrl = imageData.urls?.regular || null;
+  const imageUrl = await fetchAnimalImage(animalFound.name);
   res.render("animals/show.ejs", { animal: animalFound, imageUrl });
 });
 
 //delete animal
 app.delete("/animals/:animalId", async (req, res) => {
-  await Animal.findByIdAndDelete(req.params.animalId);
+  const result = await removeAnimalForUser(
+    req.session.user._id,
+    req.params.animalId
+  );
+
+  if (!result.success) {
+    return res.status(403).send(result.message);
+  }
+
   res.redirect("/animals");
 });
 
@@ -97,16 +111,31 @@ app.get("/animals/:animalId/edit", async (req, res) => {
 
 //updating
 app.put("/animals/:animalId", async (req, res) => {
-  await Animal.findByIdAndUpdate(req.params.animalId, req.body);
+  const result = await updateAnimalDetailsForUser(
+    req.session.user._id,
+    req.params.animalId,
+    req.body
+  );
+
+  if (!result.success) {
+    return res.status(403).send(result.message);
+  }
+
   res.redirect(`/animals/${req.params.animalId}`);
 });
 
 //create the actual new animal and send it to mongodb
 app.post("/animals", async (req, res) => {
-  console.log(req.body);
+  const userId = req.session.user._id;
   const newAnimal = await Animal.create(req.body);
-  await addAnimalToUser(req.session.user._id, newAnimal._id);
-  console.log(`Added animal ${newAnimal._id} to user ${req.session.user._id}`);
+
+  try {
+    await addAnimalToUser(userId, newAnimal._id);
+    console.log(`Added animal ${newAnimal._id} to user ${userId}`);
+  } catch (err) {
+    console.error("Failed to add animal to user:", err);
+  }
+
   res.redirect("/animals");
 });
 
@@ -131,8 +160,6 @@ app.post("/searchItem", async (req, res) => {
     }
     //Animal API
     const animalData = await animalApiResponse.json();
-    console.log(animalData[0]);
-    console.log(animalData[0].characteristics.type);
 
     //Image API
     const imageApiResponse = await fetch(

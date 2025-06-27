@@ -33,13 +33,12 @@ router.post("/sign-up", async (req, res) => {
   //create user
   // validation logic -  unique username , and password matches confirmed
   const user = await User.create(req.body);
-  //res.send(`Thanks for signing up ${user.username}`);
-  res.render("auth/sign-in.ejs");
+  res.redirect("/auth/sign-in?newUser=true");
 });
 
 //*Sign-In Get
 router.get("/sign-in", (req, res) => {
-  res.render("auth/sign-in.ejs");
+  res.render("auth/sign-in.ejs", { newUser: req.query.newUser });
 });
 
 //*Sign-In POST
@@ -53,7 +52,7 @@ router.post("/sign-in", async (req, res) => {
   // There is a user! Time to test their password with bcrypt
   const validPassword = bcrypt.compareSync(
     req.body.password,
-    userInDatabase.password,
+    userInDatabase.password
   );
   if (!validPassword) {
     return res.send("Login failed. Please try again.");
