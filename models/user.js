@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  animal: [
+  animals: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Animal", // Reference to the Animal model
